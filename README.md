@@ -1,42 +1,46 @@
-# cancellation
+# interruption
 
-`cancellation` is a package to implement a cancellation object. This is very
-similar to how cancellation is modelled around `context.Context`, but with a
-dedicated object, and new non-blocking semantic.
+`interruption` is a package to implement generic types of interruption, like
+cancellation or pausing. This is very similar in principle to how cancellation
+is modelled in `context.Context`, but with a dedicated object (no bag-of-values)
+and new non-blocking semantic.
 
-## non-blocking cancellation
+See https://dave.cheney.net/2017/08/20/context-isnt-for-cancellation for
+background.
+
+## non-blocking interruption
 
 ```go
-// create a cancellation object `c` and a cancellation function `cancel`
-c, cancel := cancellation.New()
+// create an interruption object `c` and an interruption function `interrupt`
+c, interrupt := interruption.New()
 
-// non-blocking check for cancellation. This prints false
+// non-blocking check for interruption. This prints false
 fmt.Println(c.DoneNonBlock())
 
-// cancel the operation, and check again. This prints true
-cancel()
+// interrupt the operation, and check again. This prints true
+interrupt()
 fmt.Println(c.DoneNonBlock())
 ```
 
-## blocking cancellation
+## blocking interruption
 
 ```go
-c, cancel := cancellation.New()
+c, interrupt := interruption.New()
 
-// delay cancellation by one second
+// delay interruption by one second
 go func() {
     time.Sleep(time.Second)
-    cancel()
+    interrupt()
 }
 
-// block until cancellation comes one second later
+// block until interruption comes one second later
 <-c.Done()
 ```
 
-## Why `cancel` is not a method?
+## Why `interupt` is a function and not a method?
 
-You may wonder why `cancel` is a function returned by `New` alongside the
-`Cancellation` object. The reason is that we want to avoid exposing the
-cancellation function to the code that will check for cancellation, to avoid
-that it triggers cancellation itself. This is very similar to the
-`context.Context` semantic.
+You may wonder why `interrupt` is a function returned by `New` alongside the
+`Interruption` object. The reason is that we want to avoid exposing the
+interruption function to the code that is target of the interruption, otherwise
+it may trigger its own interruption, and of any object bound to this
+interruption object. This is very similar to the `context.Context` semantic.

@@ -4,22 +4,22 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/insomniacslk/cancellation"
+	"github.com/insomniacslk/interruption"
 )
 
 func main() {
 	// non-blocking
-	c, cancel := cancellation.New()
-	fmt.Println("non-blocking cancellation:", c.DoneNonBlock())
+	c, cancel := interruption.New()
+	fmt.Println("non-blocking interruption:", c.DoneNonBlock())
 	cancel()
-	fmt.Println("non-blocking cancellation:", c.DoneNonBlock())
+	fmt.Println("non-blocking interruption:", c.DoneNonBlock())
 
 	// blocking
-	c, cancel = cancellation.New()
+	c, cancel = interruption.New()
 	go func() {
 		time.Sleep(time.Second)
 		cancel()
 	}()
 	<-c.Done()
-	fmt.Println("blocking cancellation: done")
+	fmt.Println("blocking interruption: done")
 }

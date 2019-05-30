@@ -10,10 +10,8 @@ import (
 func main() {
 	// non-blocking
 	c, cancel := cancellation.New()
-	go func() {
-		cancel()
-	}()
-	time.Sleep(time.Second)
+	fmt.Println("non-blocking cancellation:", c.DoneNonBlock())
+	cancel()
 	fmt.Println("non-blocking cancellation:", c.DoneNonBlock())
 
 	// blocking

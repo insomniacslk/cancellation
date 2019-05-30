@@ -32,3 +32,11 @@ go func() {
 // block until cancellation comes one second later
 <-c.Done()
 ```
+
+## Why `cancel` is not a method?
+
+You may wonder why `cancel` is a function returned by `New` alongside the
+`Cancellation` object. The reason is that we want to avoid exposing the
+cancellation function to the code that will check for cancellation, to avoid
+that it triggers cancellation itself. This is very similar to the
+`context.Context` semantic.

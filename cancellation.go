@@ -9,10 +9,11 @@ type Cancellation struct {
 }
 
 // New returns an initialized Cancellation object.
-func New() Cancellation {
-	return Cancellation{
+func New() (*Cancellation, func()) {
+	c := Cancellation{
 		ch: make(chan struct{}),
 	}
+	return &c, c.cancel
 }
 
 // Done checks if cancellation was requested.
@@ -30,7 +31,7 @@ func (c *Cancellation) DoneNonBlock() bool {
 	}
 }
 
-// Cancel sends a cancellation request.
-func (c *Cancellation) Cancel() {
+// cancel sends a cancellation request.
+func (c *Cancellation) cancel() {
 	close(c.ch)
 }

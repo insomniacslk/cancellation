@@ -8,10 +8,20 @@ import (
 )
 
 func main() {
-	c := cancellation.New()
+	// non-blocking
+	c, cancel := cancellation.New()
 	go func() {
-		c.Cancel()
+		cancel()
 	}()
 	time.Sleep(time.Second)
-	fmt.Println(c.DoneNonBlock())
+	fmt.Println("non-blocking cancellation:", c.DoneNonBlock())
+
+	// blocking
+	c, cancel = cancellation.New()
+	go func() {
+		time.Sleep(time.Second)
+		cancel()
+	}()
+	<-c.Done()
+	fmt.Println("blocking cancellation: done")
 }
